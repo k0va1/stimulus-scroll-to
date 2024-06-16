@@ -28,24 +28,24 @@ export default class ScrollTo extends Controller<HTMLAnchorElement> {
   }
 
   scroll(event: Event): void {
-    event.preventDefault()
-
-    const id: string = this.element.hash.replace(/^#/, "")
     const target = document.getElementById(id)
 
-    if (!target) {
+    if (target) {
+      event.preventDefault()
+
+      const id: string = this.element.hash.replace(/^#/, "")
+      const elementPosition: number = target.getBoundingClientRect().top + window.pageYOffset
+      const offsetPosition: number = elementPosition - this.offset
+
+      // eslint-disable-next-line no-undef
+      window.scrollTo(<ScrollToOptions>{
+        top: offsetPosition,
+        behavior: this.behavior,
+      })
+    } else {
       console.warn(`[stimulus-scroll-to] The element with the id: "${id}" does not exist on the page.`)
       return
     }
-
-    const elementPosition: number = target.getBoundingClientRect().top + window.pageYOffset
-    const offsetPosition: number = elementPosition - this.offset
-
-    // eslint-disable-next-line no-undef
-    window.scrollTo(<ScrollToOptions>{
-      top: offsetPosition,
-      behavior: this.behavior,
-    })
   }
 
   get offset(): number {
